@@ -12,6 +12,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Middleware to normalize /api prefix (handles Vercel path mapping)
+app.use((req, res, next) => {
+  if (req.url && !req.url.startsWith('/api')) {
+    req.url = '/api' + req.url;
+  }
+  next();
+});
+
 const PORT = process.env.PORT || 5001;
 const JWT_SECRET = process.env.JWT_SECRET || 'aasa_medchem_jwt_secret_key_12345';
 
