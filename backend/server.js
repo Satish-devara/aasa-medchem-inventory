@@ -17,8 +17,84 @@ const JWT_SECRET = process.env.JWT_SECRET || 'aasa_medchem_jwt_secret_key_12345'
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(async () => {
+    console.log('Connected to MongoDB');
+    await autoSeedDatabase();
+  })
   .catch(err => console.error('MongoDB connection error:', err));
+
+// Auto-seed function for cloud/empty databases
+async function autoSeedDatabase() {
+  try {
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      console.log('No users found in database. Auto-seeding initial users and products...');
+      
+      const adminPassword = await bcrypt.hash('admin123', 10);
+      const sellerPassword = await bcrypt.hash('seller123', 10);
+      
+      const adminUser = new User({
+        username: 'admin',
+        password: adminPassword,
+        role: 'admin'
+      });
+      
+      const sellerUser = new User({
+        username: 'seller',
+        password: sellerPassword,
+        role: 'seller'
+      });
+      
+      await adminUser.save();
+      await sellerUser.save();
+      
+      const products = [
+        {
+          name: 'Sodium Chloride (NaCl)',
+          dimension: 'weight',
+          baseUnit: 'kg',
+          pricePerUnit: 500,
+          stock: 25.5
+        },
+        {
+          name: 'Gold Chloride (AuCl3)',
+          dimension: 'weight',
+          baseUnit: 'g',
+          pricePerUnit: 4500,
+          stock: 50
+        },
+        {
+          name: 'Ethanol Absolute',
+          dimension: 'volume',
+          baseUnit: 'L',
+          pricePerUnit: 800,
+          stock: 100
+        },
+        {
+          name: 'Hydrochloric Acid 1M',
+          dimension: 'volume',
+          baseUnit: 'mL',
+          pricePerUnit: 1.25,
+          stock: 5000
+        },
+        {
+          name: 'Cryovial Sterile 2mL',
+          dimension: 'count',
+          baseUnit: 'unit',
+          pricePerUnit: 15,
+          stock: 1000
+        }
+      ];
+      
+      await Product.insertMany(products);
+      console.log('Auto-seeding completed successfully!');
+    } else {
+      console.log('Database already has data. Skipping auto-seed.');
+    }
+  } catch (err) {
+    console.error('Failed to auto-seed database:', err.message);
+  }
+}
 
 // Authentication Middleware
 function authenticateToken(req, res, next) {
