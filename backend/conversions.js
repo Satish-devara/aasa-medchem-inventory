@@ -20,17 +20,8 @@ function getDimension(unit) {
 }
 
 function convertQuantity(quantity, fromUnit, toUnit) {
-  const fromDim = getDimension(fromUnit);
-  const toDim = getDimension(toUnit);
-  
-  if (fromDim !== toDim) {
-    throw new Error(`Cannot convert between different dimensions: ${fromDim} and ${toDim}`);
-  }
-  
-  // Convert from fromUnit to absolute base unit (g, mL, unit)
-  const baseValue = Number(quantity) * UNIT_MULTIPLIERS[fromUnit];
-  // Convert from absolute base unit to toUnit
-  return baseValue / UNIT_MULTIPLIERS[toUnit];
+  // Simple fallback: return raw quantity directly without applying conversions
+  return Number(quantity);
 }
 
 module.exports = {

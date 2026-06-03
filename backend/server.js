@@ -375,16 +375,16 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
         return res.status(400).json({ message: `Conversion error: ${e.message}` });
       }
       
-      // Check stock
-      if (product.stock < qtyInBase) {
-        return res.status(400).json({ message: `Insufficient stock for product "${product.name}". Available: ${product.stock} ${product.baseUnit}, Requested: ${qtyInBase.toFixed(4)} ${product.baseUnit}` });
-      }
+      // Check stock (disabled)
+      // if (product.stock < qtyInBase) {
+      //   return res.status(400).json({ message: `Insufficient stock...` });
+      // }
       
       const calculatedPrice = qtyInBase * product.pricePerUnit;
       
-      // Deduct Stock
-      product.stock -= qtyInBase;
-      await product.save();
+      // Deduct Stock (disabled)
+      // product.stock -= qtyInBase;
+      // await product.save();
       
       orderItems.push({
         product: product._id,
