@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Minimal MERN stack inventory and order management system with role-based access and unit conversions.",
   "main": "index.js",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend",
     "backend": "npm start --prefix backend",
