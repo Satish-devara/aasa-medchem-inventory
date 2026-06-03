@@ -76,8 +76,85 @@ async function seedDatabase() {
       }
     ];
     
-    await Product.insertMany(products);
+    const seededProducts = await Product.insertMany(products);
     console.log('Seeded Products successfully!');
+    
+    // Seed Orders
+    const nNaCl = seededProducts.find(p => p.name.includes('Sodium Chloride'));
+    const nAuCl3 = seededProducts.find(p => p.name.includes('Gold Chloride'));
+    const nEthanol = seededProducts.find(p => p.name.includes('Ethanol'));
+    const nHCl = seededProducts.find(p => p.name.includes('Hydrochloric'));
+    const nVial = seededProducts.find(p => p.name.includes('Cryovial'));
+
+    const orders = [
+      {
+        user: sellerUser._id,
+        items: [
+          {
+            product: nNaCl._id,
+            productName: nNaCl.name,
+            orderedQuantity: 500,
+            orderedUnit: 'g',
+            calculatedPrice: 250,
+            quantityInBaseUnit: 0.5
+          },
+          {
+            product: nAuCl3._id,
+            productName: nAuCl3.name,
+            orderedQuantity: 10,
+            orderedUnit: 'g',
+            calculatedPrice: 45000,
+            quantityInBaseUnit: 10
+          }
+        ],
+        totalPrice: 45250,
+        status: 'approved',
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 day ago
+      },
+      {
+        user: sellerUser._id,
+        items: [
+          {
+            product: nEthanol._id,
+            productName: nEthanol.name,
+            orderedQuantity: 5,
+            orderedUnit: 'L',
+            calculatedPrice: 4000,
+            quantityInBaseUnit: 5
+          },
+          {
+            product: nHCl._id,
+            productName: nHCl.name,
+            orderedQuantity: 250,
+            orderedUnit: 'mL',
+            calculatedPrice: 312.50,
+            quantityInBaseUnit: 250
+          }
+        ],
+        totalPrice: 4312.50,
+        status: 'pending',
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 hours ago
+      },
+      {
+        user: sellerUser._id,
+        items: [
+          {
+            product: nVial._id,
+            productName: nVial.name,
+            orderedQuantity: 100,
+            orderedUnit: 'unit',
+            calculatedPrice: 1500,
+            quantityInBaseUnit: 100
+          }
+        ],
+        totalPrice: 1500,
+        status: 'rejected',
+        createdAt: new Date(Date.now() - 10 * 60 * 60 * 1000) // 10 hours ago
+      }
+    ];
+
+    await Order.insertMany(orders);
+    console.log('Seeded Orders successfully!');
     
     mongoose.connection.close();
     console.log('Seeding completed successfully. Connection closed.');
